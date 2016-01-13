@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name" translatable="false">Deal With It</string>
+
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+
+    <string name="title_activity_splash" translatable="false">SplashActivity</string>
+
+    <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
+    <string name="title_activity_camera" translatable="false">CameraActivity</string>
+    <string name="title_activity_edit_photo" translatable="false">EditPhotoActivity</string>
+    <string name="title_activity_settings_dialog" translatable="false">SettingsDialog</string>
+    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
+    <string name="share">Share</string>
+    <string name="loading_image">Loading image...</string>
+    <string name="saveing_image">Saving image...</string>
+    <string name="position_image">Adjust the images position!</string>
+    <string name="position_glasses">Now adjust the glasses position!</string>
+
+</resources>

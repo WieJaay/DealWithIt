@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deal With It</string>
+    <string name="loading_image">Lade Foto...</string>
+    <string name="position_glasses">Positioniere nun die Brille!</string>
+    <string name="position_image">Positioniere zunächst das Bild im Quadrat!</string>
+    <string name="share">Teilen</string>
+    <string name="saveing_image">Speichere Bild...</string>
+</resources>

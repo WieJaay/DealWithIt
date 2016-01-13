@@ -1,31 +1,24 @@
 package dealwithit.johannes_drescher.de.dealwithitapp.activities;
 
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import dealwithit.johannes_drescher.de.dealwithitapp.R;
-import dealwithit.johannes_drescher.de.dealwithitapp.camerautil.CameraManager;
-import dealwithit.johannes_drescher.de.dealwithitapp.task.SavePhotoTask;
 
 public class CameraActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-    private ImageButton mFlipButton;
-    private Animation animRotate;
-    private CameraManager mCameraManager;
+    private static final String TAG = "CameraActivity";
+    private final int CAMERA_REQUEST_CODE = 11;
+    private String mPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,70 +29,37 @@ public class CameraActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        mFlipButton = (ImageButton) findViewById(R.id.flip_button);
-        animRotate = AnimationUtils.loadAnimation(this, R.anim.rotate);
-        initListeners();
-        mCameraManager = new CameraManager(this,(FrameLayout)findViewById(R.id.camera_preview_layout));
-        mCameraManager.startPreview();
+        takePhoto();
     }
 
-    private void initListeners() {
-        mFlipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFlipButton.startAnimation(animRotate);
-                mCameraManager.switchCamera();
-            }
-        });
-
-        final ImageButton rec = (ImageButton) findViewById(R.id.rec_button);
-        rec.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCameraManager.takePhoto();
-            }
-        });
+    private void takePhoto(){
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(this)) );
+        startActivityForResult(intent, CAMERA_REQUEST_CODE);
     }
 
-    public void setImage(Bitmap bitmap) {
-        String filename = generateTimeStampedFileName();
-        saveBitmap(bitmap, filename);
-
-        Intent intent = new Intent();
-        intent.putExtra("bitmapfilename", filename);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    private void saveBitmap(Bitmap bm, final String filename) {
-
-        Looper.prepare();
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getResources().getString(R.string.loading_image));
-        progressDialog.setMessage("");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-
+    private File getTempFile(Context context){
         File sd = Environment.getExternalStorageDirectory();
-        File dest = new File(sd, filename + ".png");
-
-        Object[] objects = new Object[2];
-        objects[0] = bm;
-        objects[1] = dest;
-        new SavePhotoTask(new SavePhotoTask.onTaskComplete() {
-            @Override
-            public void fileSaved() {
-                Intent intent = new Intent();
-                intent.putExtra("bitmapfilename", filename);
-                setResult(RESULT_OK, intent);
-                finish();
-                progressDialog.cancel();
-            }
-        }).execute(objects);
+        mPath = generateTimestampedFileName("DealWithIt");
+        File dest = new File(sd, mPath + ".png");
+        return dest;
     }
 
-    private String generateTimeStampedFileName() {
-        Date d = new Date();
-        return "DealWithIt-" + d.getDay() + "-" + d.getMonth() + "-" + d.getYear() + "-" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":";
+    private String generateTimestampedFileName(String s) {
+        return s + new SimpleDateFormat("yyyy-mm-dd HH:mm:ss").format(new Date());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch(requestCode){
+                case CAMERA_REQUEST_CODE:
+                    Intent intent = new Intent();
+                    intent.putExtra("filepath",mPath);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    break;
+            }
+        }
     }
 }

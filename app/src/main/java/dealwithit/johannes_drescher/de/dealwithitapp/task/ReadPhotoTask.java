@@ -3,14 +3,10 @@ package dealwithit.johannes_drescher.de.dealwithitapp.task;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import dealwithit.johannes_drescher.de.dealwithitapp.R;
 
 /**
  * Created by Johannes on 07.01.16.

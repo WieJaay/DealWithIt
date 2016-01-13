@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,6 @@ public class EditPhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_photo);
-        readPhoto();
         mCheck = true;
         mShare = false;
 
@@ -64,6 +64,42 @@ public class EditPhotoActivity extends AppCompatActivity {
         mPhotoViewPicture.setOnDataChangeListener(l2.getOnDataChangeListener());
 
         initListeners();
+        readPhoto();
+    }
+
+    private void readPhoto() {
+
+        final ProgressDialog pg = new ProgressDialog(this);
+        pg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pg.setTitle(getResources().getString(R.string.loading_image));
+        pg.show();
+
+        File sd = Environment.getExternalStorageDirectory();
+        String path = getIntent().getStringExtra("filepath");
+        File dest = new File(sd, path + ".png");
+
+        new ReadPhotoTask(new ReadPhotoTask.onTaskComplete() {
+            @Override
+            public void fileRead(Bitmap bm) {
+                photo = bm;
+                mPhotoViewPicture.setBitmap(ImageUtil.rotateAndRenderBitmap(bm,270f));
+                pg.cancel();
+                RelativeLayout image_wrapper = (RelativeLayout) findViewById(R.id.image_wrapper_EDIT_PHOTO);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, photo.getWidth());
+                params.addRule(RelativeLayout.ABOVE, R.id.buttonPanel);
+                image_wrapper.setLayoutParams(params);
+                image_wrapper.requestLayout();
+
+                RelativeLayout squareMaker = (RelativeLayout) findViewById(R.id.squareMaker);
+                params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.ALIGN_TOP, R.id.image_wrapper_EDIT_PHOTO);
+                squareMaker.setLayoutParams(params);
+                squareMaker.setBackgroundColor(getResources().getColor(R.color.lightBlue));
+                squareMaker.requestLayout();
+
+                Toast.makeText(EditPhotoActivity.this, getResources().getString(R.string.position_image), Toast.LENGTH_LONG).show();
+            }
+        }).execute(dest);
     }
 
     private void initListeners() {
@@ -116,49 +152,5 @@ public class EditPhotoActivity extends AppCompatActivity {
                 EditPhotoActivity.this.finish();
             }
         });
-    }
-
-    private void readPhoto() {
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getResources().getString(R.string.loading_image));
-        progressDialog.setMessage("");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
-
-        String filename = getIntent().getExtras().getString("bitmapfilename");
-        File sd = Environment.getExternalStorageDirectory();
-        File loc = new File(sd, filename + ".png");
-
-        new ReadPhotoTask(new ReadPhotoTask.onTaskComplete() {
-            @Override
-            public void fileRead(Bitmap bm) {
-                photo = bm;
-                setPhoto();
-
-                progressDialog.cancel();
-
-
-                RelativeLayout image_wrapper = (RelativeLayout) findViewById(R.id.image_wrapper_EDIT_PHOTO);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, photo.getWidth());
-                params.addRule(RelativeLayout.ABOVE, R.id.buttonPanel);
-                image_wrapper.setLayoutParams(params);
-                image_wrapper.requestLayout();
-
-                RelativeLayout squareMaker = (RelativeLayout) findViewById(R.id.squareMaker);
-                params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.ALIGN_TOP, R.id.image_wrapper_EDIT_PHOTO);
-                squareMaker.setLayoutParams(params);
-                squareMaker.setBackgroundColor(getResources().getColor(R.color.lightBlue));
-                squareMaker.requestLayout();
-
-                Toast.makeText(EditPhotoActivity.this, getResources().getString(R.string.position_image), Toast.LENGTH_LONG).show();
-            }
-        }).execute(loc);
-    }
-
-    private void setPhoto() {
-        photo = ImageUtil.flip(photo, ImageUtil.FLIP_HORIZONTAL);
-        mPhotoViewPicture.setBitmap(photo);
     }
 }

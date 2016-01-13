@@ -4,18 +4,12 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
-    repositories {
-        maven {
-            url "https://s3.amazonaws.com/repo.commonsware.com"
-        }
-    }
-
     defaultConfig {
         applicationId "dealwithit.johannes_drescher.de.dealwithitapp"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -32,5 +26,4 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile 'com.commonsware.cwac:camera:0.6.+'
 }

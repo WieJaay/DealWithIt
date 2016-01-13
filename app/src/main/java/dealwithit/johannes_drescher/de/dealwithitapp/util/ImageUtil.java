@@ -39,6 +39,14 @@ public class ImageUtil {
             return bitmap;
     }
 
+    public static Bitmap rotateAndRenderBitmap(Bitmap bitmap, float rotation) {
+        // create new matrix
+        Matrix matrix = new Matrix();
+        // setup rotation degree
+        matrix.postRotate(rotation);
+        Bitmap bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return bmp;
+    }
 
 
 }

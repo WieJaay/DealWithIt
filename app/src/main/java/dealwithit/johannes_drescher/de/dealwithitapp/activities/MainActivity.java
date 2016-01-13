@@ -2,8 +2,11 @@ package dealwithit.johannes_drescher.de.dealwithitapp.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import java.io.File;
 
 import dealwithit.johannes_drescher.de.dealwithitapp.R;
 import dealwithit.johannes_drescher.de.dealwithitapp.view.PhotoView;
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==CAMERA_ACTIVITY_REQUEST_CODE) {
             Intent intent = new Intent(this,EditPhotoActivity.class);
-            intent.putExtra("bitmapfilename", data.getExtras().getString("bitmapfilename"));
+            intent.putExtra("filepath",(String)data.getExtras().get("filepath"));
             startActivityForResult(intent, EDIT_PHOTO_REQUEST_CODE);
         }
         if(requestCode==EDIT_PHOTO_REQUEST_CODE) {
